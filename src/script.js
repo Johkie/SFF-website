@@ -16,69 +16,108 @@ async function getMovieTrivias() {
     return await fetchDataAsync("https://localhost:44361/api/filmTrivia");
 }
 
+// PLACEHOLDER INNAN STÖD FINNS I BACKEND
+function getPlaceholderMoviePoster(movieName) {
+
+    if(movieName == "Jurassic Park") {
+        return "https://lh3.googleusercontent.com/BVSejbKFir0thw8OmJKsWL-uDexGT9LDwSOcDuGE7vTC13b2JxjBHGzby7suSzvzziI";
+    }
+    else if(movieName == "Blade Runner") {
+        return "https://i.pinimg.com/originals/e8/0e/7f/e80e7faf0de61a22810afbabe17dd53d.jpg";
+    }
+    else if(movieName == "Rambo") {
+        return "https://m.media-amazon.com/images/M/MV5BODBmOWU2YWMtZGUzZi00YzRhLWJjNDAtYTUwNWVkNDcyZmU5XkEyXkFqcGdeQXVyNDk3NzU2MTQ@._V1_.jpg";
+    }
+    else {
+        return "https://sd.keepcalms.com/i-w600/keep-calm-poster-not-found.jpg";
+    }
+}
+
 
 function displayMovie(movie, trivias)
 {
+    // Get data for movie
     var movieId = "movie" + movie.id;
+    var movieImg = getPlaceholderMoviePoster(movie.name)
+
     var movieItem = document.createElement("div");
     movieItem.className = "movie-item";
-
-    movieItem.className = "movie-item";
-    
-    // FULLÖSNING
-    var movieImg = "https://sd.keepcalms.com/i-w600/keep-calm-poster-not-found.jpg";
-    if(movie.name == "Jurassic Park") {
-        movieImg = "https://lh3.googleusercontent.com/BVSejbKFir0thw8OmJKsWL-uDexGT9LDwSOcDuGE7vTC13b2JxjBHGzby7suSzvzziI";
-    }
-    else if(movie.name == "Blade Runner") {
-        movieImg = "https://i.pinimg.com/originals/e8/0e/7f/e80e7faf0de61a22810afbabe17dd53d.jpg";
-    }
-    else if(movie.name == "Rambo") {
-        movieImg = "https://m.media-amazon.com/images/M/MV5BODBmOWU2YWMtZGUzZi00YzRhLWJjNDAtYTUwNWVkNDcyZmU5XkEyXkFqcGdeQXVyNDk3NzU2MTQ@._V1_.jpg";
-    }
-
     movieItem.innerHTML =
         `<button type='button' id='${movieId}'>` +
             `<img class='movie-img' src='${movieImg}'>` +
             `<div class='movie-title'>${movie.name}</div>` +
+            "<div class='trivia-holder'></div>"+
         "</button>";
-    
-    var triviaDiv = document.createElement("div");
-    triviaDiv.className = "trivia-container";
-    triviaDiv.insertAdjacentHTML("afterbegin", "<div class='trivia-title'>Trivia</div>");
-
+   
+    // Add Trivia    
+    var triviaDiv = movieItem.getElementsByClassName("trivia-holder")[0];
     if (trivias.length != 0) {
-        // Adding trivia
-        // for (let i = 0; i < trivias.length; i++) {
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < trivias.length; i++) {
             var t = document.createElement("p");
-            t.className = "trivia-text";
+            t.className = "trivia";
             t.innerHTML = `"${trivias[i].trivia}"`;
             triviaDiv.appendChild(t);
         }
     }
     else {
+        // Placeholder trivia
         var t = document.createElement("p");
         t.className = "trivia-text";
         t.innerHTML = "Sadly no trivias exist for this movie...yet!";
         triviaDiv.appendChild(t);
     }
 
-    movieItem.appendChild(triviaDiv)
-
     var content = document.getElementById("movie-container");
     content.insertAdjacentElement("beforeend", movieItem);
 
-    // var movieButton = document.getElementById(`${movieId}`);
-    // movieButton.addEventListener("click", function() {
-    //     this.classList.toggle("active");
-    //     var content = this.nextElementSibling;
-    //     if (content.style.maxWidth){
-    //     content.style.maxWidth = null;
-    //     } else {
-    //     content.style.maxWidth = 200 + "px";
-    //     }
-    // });
+    // Add click event to button
+    var movieButton = document.getElementById(`${movieId}`);
+    movieButton.addEventListener("click", function() {
+        displayMovieModal(this);
+    });
+}
+
+function displayMovieModal(movieItem) {
+
+    // Get the modal and its elements
+    var modal = document.getElementById("movie-modal");
+    var modalImg = document.getElementById("modal-img");
+    var modalTitle = document.getElementById("modal-title");
+    var modalTrivias = document.getElementById("modal-trivia");
+    var modalTriviaContainer = document.getElementById("modal-trivia-container");
+    
+    var modalTrivias = "";
+    var t = movieItem.getElementsByClassName("trivia-holder")[0].children;
+    for(i=0; i < t.length; i++) {
+        modalTrivias += `<p id='modal-trivia'>${t[i].innerHTML}</p>`;
+    }
+    
+    // Assign data to modal
+    modalImg.src = movieItem.getElementsByClassName("movie-img")[0].src;
+    modalTitle.innerHTML = movieItem.getElementsByClassName("movie-title")[0].innerHTML;
+    modalTriviaContainer.innerHTML = "<div id='modal-trivia-title'>Trivia</div>";
+    modalTriviaContainer.insertAdjacentHTML("beforeend", modalTrivias);
+
+    
+    // Add event to check when to close the modal
+    modal.addEventListener("click", function listener(event) {
+        // Check if the close button was pressed
+        var closeButton = document.getElementById("modal-close");
+        var closeButtonPressed = closeButton.contains(event.target);
+
+        // Check if the click was outside the modalcard
+        var modalCard = document.getElementById("modal-card");
+        var isClickInside= modalCard.contains(event.target);
+
+        // Close modal if click was on close button or outside of modal
+        if (!isClickInside || closeButtonPressed) {
+            modal.style.display = "none";
+            modal.removeEventListener("click", listener)
+        }
+    });
+    
+    // Display modal
+    modal.style.display = "flex";
 }
 
 

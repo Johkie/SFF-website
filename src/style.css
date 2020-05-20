@@ -111,35 +111,99 @@ html, body {
   bottom: 0px;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 3;
+  z-index: 1;
 }
 
-.trivia-container {
-  background-color: #f1f1f1;
-  padding: 0px;
-  width: 250px;
+.trivia-holder {
+  display: none;
+}
+
+#movie-modal {
+  display: none;  /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 2; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* @keyframes zoom {
+  from {transform: scale(0.3)} 
+  to {transform: scale(1)}
+} */
+
+#modal-card {
+  background-color: thistle;
+
+  margin: auto;
+  height: 100%;
+  width: 60%;
+  max-width: 800px;
+  max-height: 365px;
+  
   display: flex;
-  flex-flow: column wrap;
-  justify-content: center;
+  flex-flow: row nowrap;
+  
+  position: relative;
 
-  /* max-width: 0px; FÖR ANIMATION
+  border-radius: 8px;
   overflow: hidden;
-  transition: max-width 0.2s ease-out; */
+  /* animation-name: zoom;
+  animation-duration: 0.25s; */
 }
 
-.trivia-title {
-  /* color: white; */
-  font-size: 10px;
-  /* text-transform: uppercase; */
-  text-align: center;
+#modal-img {
+  height: 100%;
+  width: 100%;
+  max-width: 250px;
+}
+#modal-desc-box {
+  background-color: darkgray;
+  height: 100%;
+  width: 100%;
+  position: center;
+
+  margin: 0px;
+  padding: 0 10px;
+
+  display: flex;
+  flex-flow: column nowrap;
 }
 
-.trivia-text {
+#modal-close {
+  margin: 0px; padding: 0px;
+  position: absolute;
+  top: 4px;
+  right: 6px;
+
+  cursor: pointer;
+
+  color: #f1f1f1;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+#modal-title {
   margin: 2px; padding: 5px;
-  font-size: 8px;
+  font-size: 25px;
+}
+
+#modal-trivia-title {
+  color: white;
+  font-size: 20px;
+}
+
+#modal-trivia {
+  margin: 2px; padding: 5px;
+  font-size: 12px;
   background-color: white;
   position: relative;
   text-align: center;
   font-style: oblique;
   border: 1px solid black;
+
 }
