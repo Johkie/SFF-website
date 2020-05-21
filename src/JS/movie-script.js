@@ -265,22 +265,25 @@ async function rentMovie(movieId)
     var filmstudio = localStorage.getItem("filmstudio");
     if(filmstudio) {
         // Get info and build rental object
-        studio = JSON.parse(filmstudio);
-        rental = { filmId: movieId, studioId: studio.id, returned:false };
+        filmstudio = JSON.parse(filmstudio);
+        rental = { filmId: movieId, studioId: filmstudio.id, returned: false };
 
         // Post rental on server
-        await fetch(apiURL + "/rentedfilm", { 
+        var result = await fetch(apiURL + "/rentedfilm", { 
             method: 'POST',
             body: JSON.stringify(rental),
             headers: {'Content-Type': 'application/json' }    
+        })
+        .then(function(response) {
+            return response.json();
         });
 
         // Change movie stock on server
         await changeMovieStockFor(movieId, -1);
 
         // Update localstorage with new rental
-        studio.activeRents.push(rental);
-        localStorage.setItem("filmstudio", JSON.stringify(studio));
+        filmstudio.activeRents.push(result);
+        localStorage.setItem("filmstudio", JSON.stringify(filmstudio));
     }
 
     // Rebuild movielist and modal
@@ -288,12 +291,37 @@ async function rentMovie(movieId)
     displayMovieModal(movieId);
 }
 
-function returnMovie(movieId)
+async function returnMovie(movieId)
 {
     var filmstudio = localStorage.getItem("filmstudio");
     if(filmstudio) {
+        // Get rental from localstorage
         filmstudio = JSON.parse(filmstudio);
-        console.log("StudioId: " + filmstudio.id + ", återlämnar film med id:", movieId);
+        rents = filmstudio.activeRents;
+
+        // Find and modify rental
+        var rental = rents.find(r => r.filmId == movieId); 
+        if (rental) {
+            rental.returned = true;
+
+            // Update rental on server
+            await fetch(apiURL + `/rentedfilm/${rental.id}`, { 
+                    method: 'PUT',
+                    body: JSON.stringify(rental),
+                    headers: {'Content-Type': 'application/json' }    
+                    });
+                
+            // Change movie stock on server
+            await changeMovieStockFor(movieId, 1);
+            
+            // Update localstorage without rental
+            rents.splice(rents.indexOf(rental), 1);
+            localStorage.setItem("filmstudio", JSON.stringify(filmstudio));
+
+            // Rebuild movielist and modal
+            await buildMovieList();
+            displayMovieModal(movieId);
+        }
     }
 }
 
