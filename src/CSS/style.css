@@ -1,0 +1,135 @@
+html, body {
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Raleway', sans-serif;
+}
+
+.nav-bar {
+  background-color: black;
+  height: 40px;
+  display: flex;
+  flex-flow: row wrap;
+  
+  color: white;
+  
+  align-items: center;
+  padding: 0 15px;
+
+  cursor: pointer;
+}
+
+.nav-bar ul {
+  margin: 0px; padding: 0px;
+  list-style-type: none;
+  height: 100%;
+  width: 300px;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+.nav-bar ul li {
+  width: 150px;
+  flex-grow: 1;
+  text-align: center;
+}
+
+#nav-item-logo {
+  color: red;
+}
+
+#nav-item-login {
+  height: 100%;
+  display: flex;
+  flex-flow: column wrap;
+
+  font-size: 15px;
+}
+
+#login-form {
+  height: 50%;
+  display: flex;
+  display: row wrap;
+
+}
+
+#login-form p {
+  margin: 0px; padding: 0px;
+}
+
+#register-here {
+  padding: 2px 0;
+  font-size: 12px;
+  font-style: italic;
+
+}
+#register-here:hover {
+  color: yellow;
+}
+
+#register-display {
+  cursor: default;
+  z-index: 3;
+  background-color: darkred;
+  color: #212121;
+  position: fixed;
+
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+}
+
+#register-form {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+/* Full-width input fields */
+#register-form input[type=text], #register-form input[type=password] {
+  padding: 10px;
+  margin: 5px 0 10px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+#register-form input[type=text]:focus, #register-form input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+#register-form H3 {
+  text-transform: uppercase;
+  font-style: bold;
+  text-align: center;
+  margin: 5px 0px 10px 0px;
+
+}
+
+#register-form button {
+  background-color: #498a34;
+  color: white;
+  text-transform: upp;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 1;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+
+#register-errorMsg {
+  color: beige;
+  font-size: 12px;
+  font-style: italic;
+  height: 40px;
+  padding-top: 8px;
+}
+
+

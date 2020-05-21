@@ -1,0 +1,182 @@
+.content {
+    margin: auto;
+    padding: 10px; 
+    background-color: brown;
+    display: flex;
+    flex-flow: column wrap;
+    width: 80%;
+    height: 100%;
+  
+  }
+  
+  .movie-container {
+    background-color: #313438;
+    padding: 10px; 
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    /* width: 100%; */
+  }
+  
+  .movie-item {
+    margin: 0px; padding: 10px;
+  
+    width: 220px; 
+    height: 300px;
+  
+    display: flex;
+    flex-flow: column wrap;
+
+    /* flex-grow: 1; */
+    
+  }
+  
+  .movie-item button {
+    margin: 0px; padding: 0px;
+    border: none;
+    cursor: pointer;
+    
+    width: 90%;
+    height: 100%;
+    align-self: center;
+    
+    position: relative;
+    text-align: center;
+    color: white;
+  }
+  
+  .movie-item button:after {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 4px;
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 50%);
+  }
+  
+  .movie-item button:hover {
+    opacity: .9;
+  }
+  
+  .movie-img {
+    margin: 0px; padding: 0px;
+    width: 100%;
+    height: 100%;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .movie-title {
+    position: absolute;
+    color: yellow;
+    width: 100%;
+    font-size: 20px;
+    bottom: 0px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+  
+  .data-holder {
+    display: none;
+  }
+  
+  #movie-modal {
+    display: none;  /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+  }
+  
+  /* @keyframes zoom {
+    from {transform: scale(0.3)} 
+    to {transform: scale(1)}
+  } */
+  
+  #modal-card {
+    background-color: thistle;
+  
+    margin: auto;
+    height: 100%;
+    width: 60%;
+    max-width: 800px;
+    max-height: 365px;
+    
+    display: flex;
+    flex-flow: row nowrap;
+    
+    position: relative;
+  
+    border-radius: 8px;
+    overflow: hidden;
+
+    /* animation-name: zoom;
+    animation-duration: 0.25s; */
+  }
+  
+  #modal-img {
+    height: 100%;
+    width: 100%;
+    max-width: 250px;
+  }
+  #modal-desc-box {
+    background-color: darkgray;
+    height: 100%;
+    width: 100%;
+    position: center;
+  
+    margin: 0px;
+    padding: 0 10px;
+  
+    display: flex;
+    flex-flow: column nowrap;
+  }
+  
+  #modal-close {
+    margin: 0px; padding: 0px;
+    position: absolute;
+    top: 4px;
+    right: 6px;
+  
+    cursor: pointer;
+  
+    color: #f1f1f1;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  #modal-title {
+    margin: 2px; padding: 5px;
+    font-size: 25px;
+  }
+  
+  #modal-trivia-title {
+    color: white;
+    font-size: 20px;
+  }
+  
+  #modal-trivia {
+    margin: 2px; padding: 5px;
+    font-size: 12px;
+    background-color: white;
+    position: relative;
+    text-align: center;
+    font-style: oblique;
+    border: 1px solid black;
+  
+  }
+
+  #modal-logged-in {
+    background-color: rosybrown;
+  }
+  

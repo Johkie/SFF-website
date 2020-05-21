@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="CSS/style.css">
+    <link rel="stylesheet" type="text/css" href="CSS/movie-style.css">
 
     <script src="https://kit.fontawesome.com/ed83d95929.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" rel="stylesheet">
@@ -13,43 +14,20 @@
 </head>
 <body>
     <header class="nav-bar">
-        <ul>
+        <div class="nav-item" id="nav-item-logo">Svenska Förenade Filmstudios</div>
+        <ul class="nav-item">
             <li>Home</li>
             <li>Movies</li>
         </ul>
-
-        <div class="nav-item-login">
-            <input type="text" placeholder="Filmstudio..." name="username" id="loginUser">
-            <input type="password" placeholder="Lösenord..." name="password" id="loginPass">
-        </div>
+        <div class="nav-item" id="nav-item-login"></div>
     </header>
     
     <div id="content" class="content">
         <div id="movie-container" class="movie-container"></div>       
-        <div id="movie-modal">
-            <div id="modal-card">
-                <img id="modal-img">
-                <div id="modal-desc-box">
-                    <span id="modal-close" class="far fa-window-close"></span>
-                    <p id="modal-title">Title</p>
-                    <div id="modal-trivia-container">Trivia</div>
-            </div>
-            </div>
-        </div>    
+        
     </div>
 
-    <script src="script.js"></script>
+    <script src="JS/main-script.js"></script>
+    <script src="JS/movie-script.js"></script>
 </body>
 </html>
-
-
-
-
-    <!-- ICONS -->
-    <!-- <i class="fas fa-user"></i>
-    <span style="font-size: 3em; color: gray;">
-        <button class="fas fa-camera"></button>
-      </span>
-
-      
-    <span class="fas fa-camera"></span>  -->

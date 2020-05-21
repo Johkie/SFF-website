@@ -1,0 +1,58 @@
+html, body {
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Raleway', sans-serif;
+}
+
+.nav-bar {
+  height: 40px;
+  background-color: #282828;
+  color: white;
+  text-transform: uppercase;
+  
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-flow: row wrap;
+
+  padding: 0 15px;
+}
+
+.nav-bar ul {
+  list-style-type: none;
+  display: flex;
+  margin: 0px; padding: 0px;
+  width: 300px;
+}
+
+.nav-bar ul li {
+  width: 150px;
+  flex-grow: 1;
+  text-align: center;
+}
+
+#nav-item-logo {
+  color: red;
+  width: 20%;
+}
+
+#nav-item-login {
+  /* justify-self: flex-end;  */
+
+  display: flex;
+  flex-flow: column wrap;
+  height: 40%;
+  color: yellow;
+}
+
+#login-form {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#login-form * {
+  flex-grow: 1;
+}
+
+
