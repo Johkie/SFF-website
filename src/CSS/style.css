@@ -107,20 +107,29 @@ html, body {
 }
 
 #register-form button {
-  background-color: #498a34;
-  color: white;
-  text-transform: upp;
+  text-transform: uppercase;
+  font-style: bold;
   padding: 16px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   width: 100%;
   margin-bottom:10px;
-  opacity: 1;
+  opacity: .95;
+}
+
+#register-submit-btn {
+  color: white;
+  background-color: #498a34;
+}
+
+#register-cancel-btn {
+  color: black;
+  background-color: burlywood;
 }
 
 /* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
+#register-form button:hover {
   opacity: 1;
 }
 

@@ -41,7 +41,6 @@ function getPlaceholderMoviePoster(movieName) {
     }
 }
 
-
 function displayMovies()
 {
     var movieContainer = document.getElementById("movie-container");
@@ -65,7 +64,6 @@ function displayMovies()
 }
 
 function displayMovieModal(movieId) {
-
     var movieInfo = movieList.find(movie => movie.movie.id == movieId);
     var movie = movieInfo.movie;
 
@@ -117,55 +115,149 @@ function displayMovieModal(movieId) {
     modalTriviaContainer.innerHTML = "<div id='modal-trivia-title'>Trivia</div>";
     modalTriviaContainer.insertAdjacentHTML("beforeend", modalTrivias);
     modalLoggedIn.innerHTML ="";
+    modalLoggedIn.style.visibility = "visible";
     
+
     // Add logged in specific data
+    displayLoggedInData(movie, modalLoggedIn);
+
+    // TEMPORÄRT FÖRHOPPNINGSVIS MEN ANTAGLIGEN INTE---------
+    var closeButton = document.getElementById("modal-close");
+    closeButton.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+
+    // // Add event to check when to close the modal
+    // modal.addEventListener("click", function listener(event) {
+    //     // Check if the close button was pressed
+    //     var closeButton = document.getElementById("modal-close");
+    //     var closeButtonPressed = closeButton.contains(event.target);
+
+    //     // Check if the click was outside the modalcard
+    //     var modalCard = document.getElementById("modal-card");
+    //     var isClickInside= modalCard.contains(event.target);
+
+    //     // Close modal if click was on close button or outside of modal
+    //     if (!isClickInside || closeButtonPressed) {
+    //         modal.style.display = "none";
+    //         modal.removeEventListener("click", listener)
+    //     }
+    // });
+    
+    // Display modal
+    modal.style.display = "flex";
+
+}
+
+function displayLoggedInData(movie, modalLoggedIn) {
     let filmstudio = localStorage.getItem("filmstudio");
     if(filmstudio) {
         activeRents = JSON.parse(filmstudio).activeRents;
 
-        // Get logged-in specific data
+        // Display license left
         modalLoggedIn.insertAdjacentHTML("beforeend",
-            `<div id='modal-movie-stock'>Filmer kvar: ${movie.stock}</div>`);
+            `<div id='modal-movie-stock'>Licenser kvar: ${movie.stock}</div>`);
 
-        if(activeRents.find(r => r.filmId == movieId)) {
+        // If studio has an active rental, show return button
+        // Else show a rent button
+        if(activeRents.find(r => r.filmId == movie.id)) {
             modalLoggedIn.insertAdjacentHTML("beforeend",
                 "<button id='modal-return-button'>Returnera</button>" );
 
             var returnButton = document.getElementById("modal-return-button");
             returnButton.addEventListener("click", function() {
-                returnMovie(movieId);
+                returnMovie(movie.id);
             });
-
         } else {
             modalLoggedIn.insertAdjacentHTML("beforeend",
                 "<button id='modal-rent-button'>Hyr</button>" );
 
             var rentButton = document.getElementById("modal-rent-button");
             rentButton.addEventListener("click", function() {
-                rentMovie(movieId);
+                rentMovie(movie.id);
             });
-        }            
-    }
-    
-    // Add event to check when to close the modal
-    modal.addEventListener("click", function listener(event) {
-        // Check if the close button was pressed
-        var closeButton = document.getElementById("modal-close");
-        var closeButtonPressed = closeButton.contains(event.target);
-
-        // Check if the click was outside the modalcard
-        var modalCard = document.getElementById("modal-card");
-        var isClickInside= modalCard.contains(event.target);
-
-        // Close modal if click was on close button or outside of modal
-        if (!isClickInside || closeButtonPressed) {
-            modal.style.display = "none";
-            modal.removeEventListener("click", listener)
         }
-    });
-    
-    // Display modal
-    modal.style.display = "flex";
+
+        //Didplay add trivia button 
+        modalLoggedIn.insertAdjacentHTML("beforeend", 
+        `<button id="modal-trivia-button">Lägg till trivia</button>
+        `);
+
+        var addTriviaButton = document.getElementById("modal-trivia-button");
+        addTriviaButton.addEventListener("click", function listener() {
+            displayAddTriviaWindow(movie.id);
+        })
+    }
+}
+
+function displayAddTriviaWindow(movieId) {
+    var filmstudio = localStorage.getItem("filmstudio");
+    if(filmstudio) {
+        var modalTrivia = document.getElementById("modal-trivia-container");
+        var modalLoggedIn = document.getElementById("modal-logged-in");
+        modalTrivia.innerHTML = "";
+        modalLoggedIn.innerHTML = "";
+        
+        modalTrivia.insertAdjacentHTML("beforeend", 
+        `
+        <div id="trivia-form">
+            <label for="trivia-text"><b>Trivia</b></label>
+            <textarea id="add-trivia-box" name="trivia-text" placeholder="Vad har du för kul att säga?"></textarea>
+            <div id="add-trivia-errorMsg"></div>
+            <button id="post-trivia">Lägg till</button>
+            <button id="cancel-trivia">Tillbaka</button>
+        </div>   
+        `
+        );
+
+        // Add click event for submit trivia button
+        var postTriviaButton = document.getElementById("post-trivia");
+        postTriviaButton.addEventListener("click", function() 
+        {
+            var text = document.getElementById("add-trivia-box").value;
+            // Post if text was found
+            if (text) {
+                addTrivia(movieId, text);
+                var triviaForm = document.getElementById("trivia-form");
+                triviaForm.innerHTML = "";
+                triviaForm.insertAdjacentHTML("beforeend", 
+                    `<div>Din trivia är tillagd!</div>
+                    <button id="cancel-trivia">Tillbaka</button>
+                    `);
+
+                var cancelButton = document.getElementById("cancel-trivia");
+                cancelButton.addEventListener("click", async function() {
+                    await buildMovieList();
+                    displayMovieModal(movieId);
+                })
+
+            } else {
+                var errorMsg = document.getElementById("add-trivia-errorMsg");
+                errorMsg.innerHTML = "Ingen trivia inskriven!";
+            }
+        })
+        
+        // Add click event for cancel button
+        var cancelTriviaButton = document.getElementById("cancel-trivia");
+        cancelTriviaButton.addEventListener("click", async function() {
+            displayMovieModal(movieId);
+        })        
+    }
+}
+
+async function addTrivia(movieId, text) {
+    var filmstudio = localStorage.getItem("filmstudio");
+    if(filmstudio) {
+        // Get studio and build object
+        trivia = { filmId: movieId, trivia: text };
+
+        // Post trivia to server
+        await fetch(apiURL + "/filmtrivia", { 
+            method: 'POST',
+            body: JSON.stringify(trivia),
+            headers: {'Content-Type': 'application/json' }    
+        });
+    }
 }
 
 async function rentMovie(movieId)

@@ -147,7 +147,6 @@ function showRegisterWindow() {
                     var cancelButton = document.getElementById("register-cancel-btn") ;
                     cancelButton.addEventListener("click", hideRegisterWindow);
                 }
-
             }
             else {
                 displayErrorMsg("Alla fält är ej ifyllda!");
@@ -178,7 +177,6 @@ async function registerNewStudio(studio, email, pw) {
 
         return true;
     }
-
 }
 
 function hideRegisterWindow() {

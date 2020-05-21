@@ -179,4 +179,10 @@
   #modal-logged-in {
     background-color: rosybrown;
   }
+
+  #add-trivia-box {
+    width: 80%;
+    height: 4em;
+    resize: none;
+  }
   
