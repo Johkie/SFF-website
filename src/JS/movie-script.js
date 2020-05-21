@@ -168,6 +168,9 @@ function displayLoggedInData(movie, modalLoggedIn) {
             returnButton.addEventListener("click", function() {
                 returnMovie(movie.id);
             });
+        } else if(parseInt(movie.stock) <= 0) {
+            modalLoggedIn.insertAdjacentHTML("beforeend",
+                "<button id='modal-nostock-button'>Slut</button>" );
         } else {
             modalLoggedIn.insertAdjacentHTML("beforeend",
                 "<button id='modal-rent-button'>Hyr</button>" );
