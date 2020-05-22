@@ -1,7 +1,14 @@
 var apiURL = "https://localhost:44361/api";
 
+//add admin account TEMPORARY
+registerNewStudio("admin", "admin@admin.se", "admin");
+
 // Make sure that rentlist is up to date
 updateFilmstudioStorage();
+
+function CheckIfAdmin(name) {
+    return (name == "admin") ? true : false;
+}
 
 async function updateFilmstudioStorage() {
     
@@ -26,15 +33,15 @@ async function fetchActiveRentsForLoggedInUser(filmstudioId) {
 }
 
 function getLoggedInUser() {
-    return localStorage.getItem("filmstudio");
+    return localStorage.getItem("loggedUser");
 }
 
 function updateLoggedInUser(rawData) {
-    localStorage.setItem("filmstudio", JSON.stringify(rawData));
+    localStorage.setItem("loggedUser", JSON.stringify(rawData));
 }
 
 function removeLoggedInUser() {
-    localStorage.removeItem("filmstudio");
+    localStorage.removeItem("loggedUser");
 }
 
 if(getLoggedInUser()) {
@@ -88,12 +95,12 @@ function showLoginOptions() {
                 displayLoginErrorMsg();
 
             } else {
-                if(result.name == "admin") {
-                    console.log("admin hej");
-                }
+                // Check if an admin has logged in!
+                var isAdmin = CheckIfAdmin(result.name);
+
                 var rentedMovies = await fetchActiveRentsForLoggedInUser(result.id);
-                var filmstudio = { id: result.id, name: result.name, activeRents: rentedMovies };
-                updateLoggedInUser(filmstudio);
+                var user = { id: result.id, name: result.name, isAdmin: isAdmin, activeRents: rentedMovies };
+                updateLoggedInUser(user);
                 showWelcome();
             }
         });
@@ -150,7 +157,7 @@ function showRegisterWindow() {
                 var result = await registerNewStudio(studioInput, emailInput, pwInput);
 
                 if (result != true) {
-                    displayErrorMsg(result);
+                    displayRegisterErrorMsg(result);
                 }
                 else {
                     var registerForm = document.getElementById("register-form");
@@ -168,7 +175,7 @@ function showRegisterWindow() {
                 }
             }
             else {
-                displayErrorMsg("Alla fält är ej ifyllda!");
+                displayRegisterErrorMsg("Alla fält är ej ifyllda!");
             }
         });       
     }
@@ -203,7 +210,7 @@ function hideRegisterWindow() {
     registerDisplay.parentNode.removeChild(registerDisplay);
 }
 
-function displayErrorMsg(msg) {
+function displayRegisterErrorMsg(msg) {
     var registerErrorMsg = document.getElementById("register-errorMsg");
     registerErrorMsg.innerHTML = "";
     registerErrorMsg.innerHTML = msg;

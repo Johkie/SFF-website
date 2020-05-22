@@ -152,33 +152,38 @@ function displayMovieModal(movieId) {
 function displayLoggedInData(movie, modalLoggedIn) {
     let filmstudio = getLoggedInUser();
     if(filmstudio) {
-        activeRents = JSON.parse(filmstudio).activeRents;
+        filmstudio = JSON.parse(filmstudio);
+        activeRents = filmstudio.activeRents;
 
         // Display license left
         modalLoggedIn.insertAdjacentHTML("beforeend",
             `<div id='modal-movie-stock'>Licenser kvar: ${movie.stock}</div>`);
 
-        // If studio has an active rental, show return button
-        // Else show a rent button
-        if(activeRents.find(r => r.filmId == movie.id)) {
-            modalLoggedIn.insertAdjacentHTML("beforeend",
+        // Only show rental options if not an admin
+        if (!filmstudio.isAdmin) {
+
+            // If studio has an active rental, show return button
+            // Else show a rent button
+            if(activeRents.find(r => r.filmId == movie.id)) {
+                modalLoggedIn.insertAdjacentHTML("beforeend",
                 "<button id='modal-return-button'>Returnera</button>" );
-
-            var returnButton = document.getElementById("modal-return-button");
-            returnButton.addEventListener("click", function() {
-                returnMovie(movie.id);
-            });
-        } else if(parseInt(movie.stock) <= 0) {
-            modalLoggedIn.insertAdjacentHTML("beforeend",
+                
+                var returnButton = document.getElementById("modal-return-button");
+                returnButton.addEventListener("click", function() {
+                    returnMovie(movie.id);
+                });
+            } else if(parseInt(movie.stock) <= 0) {
+                modalLoggedIn.insertAdjacentHTML("beforeend",
                 "<button id='modal-nostock-button'>Slut</button>" );
-        } else {
-            modalLoggedIn.insertAdjacentHTML("beforeend",
+            } else {
+                modalLoggedIn.insertAdjacentHTML("beforeend",
                 "<button id='modal-rent-button'>Hyr</button>" );
-
-            var rentButton = document.getElementById("modal-rent-button");
-            rentButton.addEventListener("click", function() {
-                rentMovie(movie.id);
-            });
+                
+                var rentButton = document.getElementById("modal-rent-button");
+                rentButton.addEventListener("click", function() {
+                    rentMovie(movie.id);
+                });
+            }
         }
 
         //Didplay add trivia button 
