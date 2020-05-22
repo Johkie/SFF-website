@@ -123,6 +123,37 @@ async function returnMovie(movieId)
     }
 }
 
+async function addNewMovie(title, imgSrc, stock) {
+    var user = getLoggedInUser();
+    if(user) {
+        user = JSON.parse(user);
+        if(user.isAdmin) {
+            try {
+                // Build movie object
+                var movie = { name: title, /*imgSrc: imgSrc,*/ stock: stock };
+                
+                // Post rental on server
+                await fetch(apiURL + "/film", { 
+                    method: 'POST',
+                    body: JSON.stringify(movie),
+                    headers: {'Content-Type': 'application/json' }    
+                })
+                .then(function(response) {
+                    return response.json();
+                });
+
+                // Rebuild movielist and modal
+                 await buildMovieList();
+                displayMovieModal(movieId);
+            } catch(error) {
+                console.log(error);
+                return false;
+            }
+        }        
+    }
+    return true;
+}
+
 async function changeMovieStockFor(movieId, valueChange) {
     var movie = movieList.find(m => m.movie.id == movieId).movie;
 

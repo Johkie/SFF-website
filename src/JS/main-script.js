@@ -6,7 +6,7 @@ registerNewStudio("admin", "admin@admin.se", "admin");
 // Make sure that rentlist is up to date
 updateFilmstudioStorage();
 
-function CheckIfAdmin(name) {
+function CheckIfAdminLogin(name) {
     return (name == "admin") ? true : false;
 }
 
@@ -19,15 +19,16 @@ if(getLoggedInUser()) {
 function showWelcome() {
     var filmstudio = JSON.parse(getLoggedInUser());
     var loginDiv = document.getElementById("nav-item-login");
-
+    
     loginDiv.innerHTML = "Inloggad som: " + filmstudio.name;
     loginDiv.insertAdjacentHTML("beforeend", 
-        "<button id='logout-button'>Logga Ut</button>"
+    "<button id='logout-button'>Logga Ut</button>"
     );
-
+    
     var logoutButton = document.getElementById("logout-button");
     logoutButton.addEventListener("click", function() {
         removeLoggedInUser();
+        buildContentWindow();
         showLoginOptions();
     });
 }
@@ -62,12 +63,13 @@ function showLoginOptions() {
 
             } else {
                 // Check if an admin has logged in!
-                var isAdmin = CheckIfAdmin(result.name);
+                var isAdmin = CheckIfAdminLogin(result.name);
 
                 var rentedMovies = await fetchActiveRentsForLoggedInUser(result.id);
                 var user = { id: result.id, name: result.name, isAdmin: isAdmin, activeRents: rentedMovies };
                 updateLoggedInUser(user);
                 showWelcome();
+                buildContentWindow();
             }
         });
     });

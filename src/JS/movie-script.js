@@ -1,9 +1,42 @@
 var movieList = [];
-buildMovieList();
+buildContentWindow();
 
 async function buildMovieList() {
     movieList = await getMovieList();
     displayMovies();
+}
+
+function buildContentWindow() {
+    var content = document.getElementById("content");
+
+    // If movie-container does not exist, create it
+    if (!document.getElementById("movie-container")) {
+        content.insertAdjacentHTML("beforeend", `<div id="movie-container" class="movie-container"></div>`);
+    }
+    // Build and display the movielist
+    buildMovieList();
+
+    // If admin content exists, remove it.
+    var adminContent = document.getElementById("admin-content");
+    if(adminContent) {
+        content.removeChild(adminContent);
+    };
+    
+    // If user is an admin, create and display the admin content
+    var user = getLoggedInUser();
+    if (user) {
+        user = JSON.parse(getLoggedInUser());
+        if (user.isAdmin) {
+            content.insertAdjacentHTML("beforeend", 
+            `
+            <div id="admin-content">
+                <div>Admin Panel</div>
+                <div id="admin-display"></div>
+            </div>`);
+
+            displayAdminWindow();
+        }
+    }
 }
 
 function displayMovies()
@@ -215,5 +248,99 @@ function displayAddTriviaWindow(movieId) {
         cancelTriviaButton.addEventListener("click", async function() {
             displayMovieModal(movieId);
         })        
+    }
+}
+
+function displayAdminWindow() {
+    var user = JSON.parse(getLoggedInUser());
+    if (user.isAdmin) {
+
+        // var content = document.getElementById("content");
+        // content.insertAdjacentHTML("beforeend", `<div id="admin-content"></div>`);
+        
+        var adminDisplay = document.getElementById("admin-display");
+        adminDisplay.innerHTML = "";
+        adminDisplay.insertAdjacentHTML("beforeend", 
+        `
+            <button id="admin-add-movie-button">Lägg till film</button>
+        `);
+        
+        var addMovieBtn = document.getElementById("admin-add-movie-button");
+        addMovieBtn.addEventListener("click", displayAddMovieForm); 
+    }
+}
+
+function displayAddMovieForm() {
+    var user = JSON.parse(getLoggedInUser());
+    if (user.isAdmin) {
+    
+    var adminDisplay = document.getElementById("admin-display");
+    adminDisplay.innerHTML = "";
+    adminDisplay.insertAdjacentHTML("beforeend", 
+    `
+    <div id="add-movie-form">
+        <h3>Lägg till ny film</h3>
+        <label for="title"><b>Filmtitel*</b></label>
+        <input id="form-movie-title" type="text" placeholder="Ange titel" name="title"> 
+        
+        <label for="img"><b>Länk till bild/poster*</b></label>
+        <input id="form-movie-img" type="text" placeholder="Ange länk till bild" name="img"> 
+
+        <label for="stock"><b>Antal licenser</b></label>
+        <input id="form-movie-stock" type="text" placeholder="Ange antal licenser" name="stock">
+
+        <div id="add-movie-errorMsg"></div>
+        
+        <button id="form-submit-button">Lägg till</button>
+        <button id="form-cancel-button">Tillbaka</button>
+    </div>
+    `); 
+
+    var submitButton = document.getElementById("form-submit-button");
+    submitButton.addEventListener("click", function() {
+        var errorMsgDiv = document.getElementById("add-movie-errorMsg"); 
+
+        var inputTitle = document.getElementById("form-movie-title").value;
+        var inputImgSrc = document.getElementById("form-movie-img").value;
+        var inputStock = document.getElementById("form-movie-stock").value;
+
+        // Check if all fields got a value
+        if(inputTitle && inputImgSrc && inputStock) {
+            // Convert and check if stock value is of type int
+            inputStock = parseInt(inputStock);
+            if(inputStock) {
+                // Add movie to server
+                var result = addNewMovie(inputTitle, inputImgSrc, inputStock);
+                
+                // If movie was added sucessfully
+                if(result) {
+                    var movieForm = document.getElementById("add-movie-form");
+                    movieForm.innerHTML = "";
+                    movieForm.insertAdjacentHTML("beforebegin", 
+                    `
+                        <div>Filmen har lagts till!</div>
+                        <button id="form-cancel-button">Tillbaka</button>
+                    `);
+
+                    var cancelButton = document.getElementById("form-cancel-button");
+                    cancelButton.addEventListener("click", displayAdminWindow);
+                }
+                else {
+                    errorMsgDiv.innerHTML = "Något oväntat gick fel..."
+                }
+                
+            }
+            else {
+                errorMsgDiv.innerHTML = "'Antal licenser' måste vara ett tal"
+            }
+        }
+        else {
+            errorMsgDiv.innerHTML = "Alla fält är ej ifyllda!"
+        }
+    });
+
+    var cancelButton = document.getElementById("form-cancel-button");
+    cancelButton.addEventListener("click", displayAdminWindow);
+    
     }
 }
