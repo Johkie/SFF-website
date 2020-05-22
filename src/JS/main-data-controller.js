@@ -32,18 +32,50 @@ async function updateFilmstudioStorage() {
     }
 }
 
+
+async function AttempToFindLogin(user, pw) {
+    
+    // Fetch all users and compare 'em with the provided input
+    return fetchDataAsync(apiURL + "/filmstudio")
+    .then(function(data) {
+        for(i=0; i < data.length; i++) {
+            
+            u = data[i].name;
+            p = data[i].password;
+            
+            if(u == user && p == pw) {
+                return data[i];
+            }
+        };
+        
+        // If no matches found
+        return null;
+    });
+}
+
 async function registerNewStudio(studio, email, pw) {
     var studios = await fetchDataAsync(apiURL + "/filmstudio");
 
+    // if(studio == "admin") {
+    //     return `Otillåtet namn: "${studio}"`;
+    // }
     if(studios.find(m => m.name == studio)) {
         return "Det finns redan en studio med det namnet...";
     }
     else {
-        var studio = { 
+
+        // ONLY FOR CONVENIENCE
+        var verified = false;
+        if (studio == "admin") {
+            verified = true;
+        }
+
+        studio = { 
             name: studio, 
             password: pw,
             // email: email,
-            verified: false  };
+            verified: verified  
+        };
 
         // Post studio to server
         await fetch(apiURL + "/filmstudio", { 
@@ -56,22 +88,36 @@ async function registerNewStudio(studio, email, pw) {
     }
 }
 
-async function AttempLogin(user, pw) {
+async function getAllFilmStudios() {
+    return await fetchDataAsync(apiURL + "/filmstudio");
+}
 
-    // Fetch all users and compare 'em with the provided input
-    return fetchDataAsync(apiURL + "/filmstudio")
-    .then(function(data) {
-        for(i=0; i < data.length; i++) {
-        
-            u = data[i].name;
-            p = data[i].password;
+async function verifyFilmstudio(filmstudioId) {
+    var user = getLoggedInUser();
+    if(user) {
+        // Get rental from localstorage
+        user = JSON.parse(user);
+        if(user.isAdmin) {
+            filmstudio = await fetchDataAsync(apiURL + `/filmstudio/${filmstudioId}`)
+            
+            // Update and post the filmstudio
+            if (filmstudio) {
+                filmstudio.verified = true;
+                try {
+                    
+                    // Update rental on server
+                    await fetch(apiURL + `/filmstudio/${filmstudioId}`, { 
+                        method: 'PUT',
+                        body: JSON.stringify(filmstudio),
+                        headers: {'Content-Type': 'application/json' }    
+                    });
 
-            if(u == user && p == pw) {
-                return data[i];
+                    displayFilmstudioPanel();
+
+                } catch(error) {
+                    console.log(error);
+                };
             }
-        };
-
-        // If no matches found
-        return null;
-    });
+        }
+    }
 }

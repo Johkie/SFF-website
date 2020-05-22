@@ -11,12 +11,12 @@ function CheckIfAdminLogin(name) {
 }
 
 if(getLoggedInUser()) {
-    showWelcome();
+    displayWelcomeScreen();
 } else {
     showLoginOptions();
 }
 
-function showWelcome() {
+function displayWelcomeScreen() {
     var filmstudio = JSON.parse(getLoggedInUser());
     var loginDiv = document.getElementById("nav-item-login");
     
@@ -55,21 +55,33 @@ function showLoginOptions() {
         var getUser = document.getElementById("loginUser").value;
         var getPw = document.getElementById("loginPass").value;
 
-       AttempLogin(getUser, getPw)
+       AttempToFindLogin(getUser, getPw)
         .then(async function(result) {
             
-            if(result == null) {
-                displayLoginErrorMsg();
+            // If a user was found
+            if(result != null) {
+                
+                // If user is verified
+                if(result.verified) {
+
+                    // Grant adminright if admin has logged in
+                    var isAdmin = CheckIfAdminLogin(result.name);
+          
+                    // Get user details and show welcome screen
+                    var rentedMovies = await fetchActiveRentsForLoggedInUser(result.id);
+                    var user = { id: result.id, name: result.name, isAdmin: isAdmin, activeRents: rentedMovies };
+                    updateLoggedInUser(user);
+
+                    // Build and display the logged in content
+                    displayWelcomeScreen();
+                    buildContentWindow();
+
+                } else {
+                    displayLoginErrorMsg("Kontot har ännu inte blivit godkänt av en administratör!");
+                }
 
             } else {
-                // Check if an admin has logged in!
-                var isAdmin = CheckIfAdminLogin(result.name);
-
-                var rentedMovies = await fetchActiveRentsForLoggedInUser(result.id);
-                var user = { id: result.id, name: result.name, isAdmin: isAdmin, activeRents: rentedMovies };
-                updateLoggedInUser(user);
-                showWelcome();
-                buildContentWindow();
+                displayLoginErrorMsg("Användarnamnet eller lösenordet stämde inte!");
             }
         });
     });
@@ -160,14 +172,14 @@ function displayRegisterErrorMsg(msg) {
     registerErrorMsg.innerHTML = msg;
 }
 
-function displayLoginErrorMsg() {
+function displayLoginErrorMsg(msg) {
     // Check if errorMsgDiv exists, if not create it.
     errorMsgDiv = document.getElementById("loginErrorMsg");
     if (errorMsgDiv) {
-        errorMsgDiv.innerHTML = "Kunde inte logga in!";
+        errorMsgDiv.innerHTML = msg;
 
     } else {
         var loginForm = document.getElementById("login-form");
-        loginForm.insertAdjacentHTML("beforeend", "<p id='loginErrorMsg'>Kunde inte logga in!</p>");
+        loginForm.insertAdjacentHTML("beforeend", `<p id='loginErrorMsg'>${msg}</p>`);
     }  
 }

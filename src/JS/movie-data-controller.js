@@ -113,7 +113,7 @@ async function returnMovie(movieId)
                 rents.splice(rents.indexOf(rental), 1);
                 updateLoggedInUser(filmstudio);
                 
-                // Rebuild movielist and modal
+                // // Rebuild movielist and modal
                 await buildMovieList();
                 displayMovieModal(movieId);
             } catch(error) {
@@ -133,7 +133,7 @@ async function addNewMovie(title, imgSrc, stock) {
                 var movie = { name: title, /*imgSrc: imgSrc,*/ stock: stock };
                 
                 // Post rental on server
-                await fetch(apiURL + "/film", { 
+                var result = await fetch(apiURL + "/film", { 
                     method: 'POST',
                     body: JSON.stringify(movie),
                     headers: {'Content-Type': 'application/json' }    

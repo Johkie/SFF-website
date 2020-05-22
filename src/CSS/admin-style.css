@@ -1,0 +1,25 @@
+/* #admin-content {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+#admin-display {
+    background-color: teal;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+#admin-studio-container {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+#admin-studios-inactive {
+    display: flex;
+    flex-flow: column wrap;
+} */
+
+.admin-studio-item {
+    display: flex;
+    flex-flow: row wrap;
+}

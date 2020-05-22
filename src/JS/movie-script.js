@@ -255,19 +255,76 @@ function displayAdminWindow() {
     var user = JSON.parse(getLoggedInUser());
     if (user.isAdmin) {
 
-        // var content = document.getElementById("content");
-        // content.insertAdjacentHTML("beforeend", `<div id="admin-content"></div>`);
-        
         var adminDisplay = document.getElementById("admin-display");
         adminDisplay.innerHTML = "";
         adminDisplay.insertAdjacentHTML("beforeend", 
         `
             <button id="admin-add-movie-button">Lägg till film</button>
+            <button id="admin-studio-panel-button">Godkänn filmstudios</button>
         `);
         
+        // Add click event for adding movies button
         var addMovieBtn = document.getElementById("admin-add-movie-button");
         addMovieBtn.addEventListener("click", displayAddMovieForm); 
+
+        // Add click event for verify filmstudios
+        var studioPanelBtn = document.getElementById("admin-studio-panel-button");
+        studioPanelBtn.addEventListener("click", displayFilmstudioPanel); 
     }
+}
+
+async function displayFilmstudioPanel() {
+    var filmstudio = await getAllFilmStudios();
+
+    var adminDisplay = document.getElementById("admin-display");
+    adminDisplay.innerHTML = "";
+    adminDisplay.insertAdjacentHTML("beforeend", 
+    `
+        <h3>Filmstudios - Panel</h3>
+        <div id="admin-studio-container"></div>
+
+
+        <button id="panel-cancel-button">Tillbaka</button>
+    `); 
+
+    var studioContainer = document.getElementById("admin-studio-container");
+    studioContainer.insertAdjacentHTML("beforeend", 
+    ` 
+        <div id="admin-studios-inactive">Studios not verified</div>
+        <div id="admin-studios-list">Studios</div>
+    `);
+
+    var inActiveStudios = document.getElementById("admin-studios-inactive");
+    var verifiedStudios = document.getElementById("admin-studios-list");
+
+    for(i=0; i < filmstudio.length; i++) {
+        studio = filmstudio[i];
+
+        // Studios that are not yet verified
+        if (!studio.verified) {
+            inActiveStudios.insertAdjacentHTML("beforeend", 
+            `
+                <div class="admin-studio-item">
+                <div>${studio.name}</div>
+                    <button onclick="verifyFilmstudio(${studio.id})">Verify</button>
+                </div>
+            `);
+        } 
+        
+        // Rest of the studios
+        else {
+            verifiedStudios.insertAdjacentHTML("beforeend", 
+            `
+            <div class="admin-studio-item">
+                <button>${studio.name}</button>
+            </div>
+            `);
+        }
+    }
+
+    // Add click event for cancel form button
+    var cancelButton = document.getElementById("panel-cancel-button");
+    cancelButton.addEventListener("click", displayAdminWindow);
 }
 
 function displayAddMovieForm() {
