@@ -30,7 +30,7 @@ function buildContentWindow() {
             content.insertAdjacentHTML("beforeend", 
             `
             <div id="admin-content">
-                <div>Admin Panel</div>
+                <div>Admin Kontrollpanel</div>
                 <div id="admin-display"></div>
             </div>`);
 
@@ -259,8 +259,10 @@ function displayAdminWindow() {
         adminDisplay.innerHTML = "";
         adminDisplay.insertAdjacentHTML("beforeend", 
         `
-            <button id="admin-add-movie-button">Lägg till film</button>
-            <button id="admin-studio-panel-button">Filmstudios Kontrollpanel</button>
+            <div id="admin-controller">
+                <button id="admin-add-movie-button">Lägg till film</button>
+                <button id="admin-studio-panel-button">Studio-kontrollpanel</button>
+            </div>
         `);
         
         // Add click event for adding movies button
@@ -315,13 +317,11 @@ async function displayFilmstudioPanel() {
     adminDisplay.insertAdjacentHTML("beforeend", 
     `
         <h3>Filmstudios - Panel</h3>
-        <div id="admin-studio-container">
-            <div id="admin-studios-inactive">Studios not verified</div>
-            <div id="admin-studios-list">Studios</div>
+        <div id="admin-studio-panel">
+            <div id="admin-studios-inactive" class="admin-studio-container">Studios not verified</div>
+            <div id="admin-studios-list" class="admin-studio-container">Studios</div>
+            <button id="panel-cancel-button">Tillbaka</button>
         </div>
-
-
-        <button id="panel-cancel-button">Tillbaka</button>
     `); 
 
     var inActiveStudioDiv = document.getElementById("admin-studios-inactive");
@@ -336,8 +336,9 @@ async function displayFilmstudioPanel() {
             inActiveStudioDiv.insertAdjacentHTML("beforeend", 
             `
                 <div class="admin-studio-item">
-                <div class="studio-panel-name">${studio.name}</div>
-                    <button onclick="verifyFilmstudio(${studio.id})">Verify</button>
+                    <div class="studio-panel-name">${studio.name}
+                        <button onclick="verifyFilmstudio(${studio.id})">Verify</button>
+                    </div>
                 </div>
             `);
         } 
@@ -352,7 +353,7 @@ async function displayFilmstudioPanel() {
                     <div class="studio-panel-name">${studio.name}</div>
                     <div class="studio-panel-email">${studio.email}</div>
                 </div>
-                <div id="studio${studio.id}-panel-rents"></div>
+                <div id="admin-studio${studio.id}-rents" class="admin-studio-rentals"></div>
             </div>
             `);  
         }
@@ -368,8 +369,7 @@ async function displayFilmstudioPanel() {
 }
 
 async function addStudioRentalsToPanel(studio) {
-    var rentDiv = document.getElementById(`studio${studio.id}-panel-rents`);
-    console.log(rentDiv);
+    var rentDiv = document.getElementById(`admin-studio${studio.id}-rents`);
     if(rentDiv) {
         for (i=0, j=studio.rentals.length; i < j; i++) {
             rental = studio.rentals[i];
