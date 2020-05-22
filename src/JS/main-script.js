@@ -68,7 +68,7 @@ function showLoginOptions() {
                     var isAdmin = CheckIfAdminLogin(result.name);
           
                     // Get user details and show welcome screen
-                    var rentedMovies = await fetchActiveRentsForLoggedInUser(result.id);
+                    var rentedMovies = await getActiveRentsForStudio(result.id);
                     var user = { id: result.id, name: result.name, isAdmin: isAdmin, activeRents: rentedMovies };
                     updateLoggedInUser(user);
 

@@ -1,4 +1,4 @@
-
+// TEMPORARY TO GET SUPPORT THAT DOES NOT EXISTS AS OF YET
 async function getMovieList() {
     var trivia = await getMovieTrivias();
     var movieList = [];
@@ -37,6 +37,14 @@ function getPlaceholderMoviePoster(movieName) {
 
 async function getMovieTrivias() {
     return fetchDataAsync("https://localhost:44361/api/filmTrivia");
+}
+
+async function getAllRentals() {
+    return fetchDataAsync("https://localhost:44361/api/rentedFilm");
+}
+
+async function getAllMovies() {
+    return fetchDataAsync("https://localhost:44361/api/film");
 }
 
 async function addTrivia(movieId, text) {

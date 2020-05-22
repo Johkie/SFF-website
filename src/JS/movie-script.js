@@ -260,7 +260,7 @@ function displayAdminWindow() {
         adminDisplay.insertAdjacentHTML("beforeend", 
         `
             <button id="admin-add-movie-button">Lägg till film</button>
-            <button id="admin-studio-panel-button">Godkänn filmstudios</button>
+            <button id="admin-studio-panel-button">Filmstudios Kontrollpanel</button>
         `);
         
         // Add click event for adding movies button
@@ -273,58 +273,117 @@ function displayAdminWindow() {
     }
 }
 
-async function displayFilmstudioPanel() {
-    var filmstudio = await getAllFilmStudios();
+async function buildStudiopPanelData() {
+    var filmstudios = await getAllFilmStudios().then(studios => studios.filter(s => s.name != "admin"));
+    var rentList = await getAllRentals();
+    var movies = await getAllMovies();
 
+    // Join with movielist to replace filmid with actual name of film
+    var rentList = join(movies, rentList, "id", "filmId", function(rentList, movies) {
+        return {
+            id: rentList.id,
+            studioId: rentList.studioId,
+            movie: (movies !== undefined) ? movies.name : null,
+            returned: rentList.returned
+        };
+    });
+
+    // Add rentals to the right studio
+    for(i=0; i < filmstudios.length; i++) {
+        var rents = rentList.filter(r => r.studioId == filmstudios[i].id)
+        rents = rents.sort((a, b) => (a.returned > b.returned) ? 1 : -1);
+        
+        filmstudios[i]["rentals"] = rents;
+    }
+
+    return filmstudios;
+}
+
+async function displayFilmstudioPanel() {
+
+    var filmstudios = await buildStudiopPanelData();
+
+    // TEMPORARY FOR DISPLAY PURPOSE
+    for (i=0; i < filmstudios.length; i++) {
+        studio = filmstudios[i];
+        studio["email"] = `${studio.name}@ph-mail.com`.toLowerCase();
+    }
+
+    // Get admin div and insert studio panel containers
     var adminDisplay = document.getElementById("admin-display");
     adminDisplay.innerHTML = "";
     adminDisplay.insertAdjacentHTML("beforeend", 
     `
         <h3>Filmstudios - Panel</h3>
-        <div id="admin-studio-container"></div>
+        <div id="admin-studio-container">
+            <div id="admin-studios-inactive">Studios not verified</div>
+            <div id="admin-studios-list">Studios</div>
+        </div>
 
 
         <button id="panel-cancel-button">Tillbaka</button>
     `); 
 
-    var studioContainer = document.getElementById("admin-studio-container");
-    studioContainer.insertAdjacentHTML("beforeend", 
-    ` 
-        <div id="admin-studios-inactive">Studios not verified</div>
-        <div id="admin-studios-list">Studios</div>
-    `);
+    var inActiveStudioDiv = document.getElementById("admin-studios-inactive");
+    var verifiedStudioDiv = document.getElementById("admin-studios-list");
 
-    var inActiveStudios = document.getElementById("admin-studios-inactive");
-    var verifiedStudios = document.getElementById("admin-studios-list");
-
-    for(i=0; i < filmstudio.length; i++) {
-        studio = filmstudio[i];
+    // Add studio in list based on if its verified or not
+    for(i=0, j=filmstudios.length; i < j; i++) {
+        studio = filmstudios[i];
 
         // Studios that are not yet verified
         if (!studio.verified) {
-            inActiveStudios.insertAdjacentHTML("beforeend", 
+            inActiveStudioDiv.insertAdjacentHTML("beforeend", 
             `
                 <div class="admin-studio-item">
-                <div>${studio.name}</div>
+                <div class="studio-panel-name">${studio.name}</div>
                     <button onclick="verifyFilmstudio(${studio.id})">Verify</button>
                 </div>
             `);
         } 
         
-        // Rest of the studios
+        // Verified studios
         else {
-            verifiedStudios.insertAdjacentHTML("beforeend", 
+            verifiedStudioDiv.insertAdjacentHTML("beforeend", 
             `
             <div class="admin-studio-item">
-                <button>${studio.name}</button>
+                <div class="admin-studio-desc">
+                    <div class="studio-panel-id">${studio.id}</div>
+                    <div class="studio-panel-name">${studio.name}</div>
+                    <div class="studio-panel-email">${studio.email}</div>
+                </div>
+                <div id="studio${studio.id}-panel-rents"></div>
             </div>
-            `);
+            `);  
         }
-    }
+    }   
+
+    filmstudios.forEach(studio => {
+        addStudioRentalsToPanel(studio);
+    });
 
     // Add click event for cancel form button
     var cancelButton = document.getElementById("panel-cancel-button");
     cancelButton.addEventListener("click", displayAdminWindow);
+}
+
+async function addStudioRentalsToPanel(studio) {
+    var rentDiv = document.getElementById(`studio${studio.id}-panel-rents`);
+    console.log(rentDiv);
+    if(rentDiv) {
+        for (i=0, j=studio.rentals.length; i < j; i++) {
+            rental = studio.rentals[i];
+            var returnedClass = "studio-rental-returned" + ((rental.returned) ? "1" : "0")
+            
+            rentDiv.insertAdjacentHTML("beforeend", 
+            `
+            <div class="studio-rental-item">
+                <div class="studio-rental-title">${rental.movie}</div>
+                <div class=${returnedClass}>${rental.returned}</div>
+            </div>
+            `); 
+        }    
+    }
 }
 
 function displayAddMovieForm() {

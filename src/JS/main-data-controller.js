@@ -5,7 +5,7 @@ async function fetchDataAsync(url)
     return data;
 }
 
-async function fetchActiveRentsForLoggedInUser(filmstudioId) {
+async function getActiveRentsForStudio(filmstudioId) {
     return fetchDataAsync(apiURL + "/rentedFilm").then(r => r.filter(rent => rent.studioId == filmstudioId && rent.returned == false));
 }
 
@@ -26,7 +26,7 @@ async function updateFilmstudioStorage() {
     if (getLoggedInUser()) {
         var filmstudio = JSON.parse(getLoggedInUser());
 
-        var rentedMovies = await fetchActiveRentsForLoggedInUser(filmstudio.id);
+        var rentedMovies = await getActiveRentsForStudio(filmstudio.id);
         filmstudio["activeRents"] = rentedMovies;
         updateLoggedInUser(filmstudio);
     }
@@ -70,6 +70,7 @@ async function registerNewStudio(studio, email, pw) {
             verified = true;
         }
 
+        // Build studio object
         studio = { 
             name: studio, 
             password: pw,
@@ -121,3 +122,21 @@ async function verifyFilmstudio(filmstudioId) {
         }
     }
 }
+
+// Thank you google
+function join(lookupTable, mainTable, lookupKey, mainKey, select) {
+    var l = lookupTable.length,
+        m = mainTable.length,
+        lookupIndex = [],
+        output = [];
+    for (var i = 0; i < l; i++) { // loop through l items
+        var row = lookupTable[i];
+        lookupIndex[row[lookupKey]] = row; // create an index for lookup table
+    }
+    for (var j = 0; j < m; j++) { // loop through m items
+        var y = mainTable[j];
+        var x = lookupIndex[y[mainKey]]; // get corresponding row from lookupTable
+        output.push(select(y, x)); // select only the columns you need
+    }
+    return output;
+};
