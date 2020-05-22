@@ -150,7 +150,7 @@ function displayMovieModal(movieId) {
 }
 
 function displayLoggedInData(movie, modalLoggedIn) {
-    let filmstudio = localStorage.getItem("filmstudio");
+    let filmstudio = getLoggedInUser();
     if(filmstudio) {
         activeRents = JSON.parse(filmstudio).activeRents;
 
@@ -194,7 +194,7 @@ function displayLoggedInData(movie, modalLoggedIn) {
 }
 
 function displayAddTriviaWindow(movieId) {
-    var filmstudio = localStorage.getItem("filmstudio");
+    var filmstudio = getLoggedInUser();;
     if(filmstudio) {
         var modalTrivia = document.getElementById("modal-trivia-container");
         var modalLoggedIn = document.getElementById("modal-logged-in");
@@ -249,7 +249,7 @@ function displayAddTriviaWindow(movieId) {
 }
 
 async function addTrivia(movieId, text) {
-    var filmstudio = localStorage.getItem("filmstudio");
+    var filmstudio = getLoggedInUser();
     if(filmstudio) {
         // Get studio and build object
         trivia = { filmId: movieId, trivia: text };
@@ -265,7 +265,7 @@ async function addTrivia(movieId, text) {
 
 async function rentMovie(movieId)
 {
-    var filmstudio = localStorage.getItem("filmstudio");
+    var filmstudio = getLoggedInUser();
     if(filmstudio) {
         // Get info and build rental object
         filmstudio = JSON.parse(filmstudio);
@@ -286,7 +286,7 @@ async function rentMovie(movieId)
 
         // Update localstorage with new rental
         filmstudio.activeRents.push(result);
-        localStorage.setItem("filmstudio", JSON.stringify(filmstudio));
+        updateLoggedInUser(filmstudio);
     }
 
     // Rebuild movielist and modal
@@ -296,34 +296,39 @@ async function rentMovie(movieId)
 
 async function returnMovie(movieId)
 {
-    var filmstudio = localStorage.getItem("filmstudio");
+    var filmstudio = getLoggedInUser();
     if(filmstudio) {
         // Get rental from localstorage
         filmstudio = JSON.parse(filmstudio);
         rents = filmstudio.activeRents;
 
         // Find and modify rental
-        var rental = rents.find(r => r.filmId == movieId); 
+        var rental = rents.find(r => r.filmId == movieId && r.returned == false); 
         if (rental) {
             rental.returned = true;
+            try {
 
-            // Update rental on server
-            await fetch(apiURL + `/rentedfilm/${rental.id}`, { 
+                // Update rental on server
+                await fetch(apiURL + `/rentedfilm/${rental.id}`, { 
                     method: 'PUT',
                     body: JSON.stringify(rental),
                     headers: {'Content-Type': 'application/json' }    
-                    });
+                });
                 
-            // Change movie stock on server
-            await changeMovieStockFor(movieId, 1);
+                // Change movie stock on server
+                await changeMovieStockFor(movieId, 1);
+                
+                // Update localstorage without rental
+                rents.splice(rents.indexOf(rental), 1);
+                updateLoggedInUser(filmstudio);
+                
+                // Rebuild movielist and modal
+                await buildMovieList();
+                displayMovieModal(movieId);
+            } catch(error) {
+                console.log(error);
+            };
             
-            // Update localstorage without rental
-            rents.splice(rents.indexOf(rental), 1);
-            localStorage.setItem("filmstudio", JSON.stringify(filmstudio));
-
-            // Rebuild movielist and modal
-            await buildMovieList();
-            displayMovieModal(movieId);
         }
     }
 }

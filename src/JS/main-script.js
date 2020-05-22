@@ -5,12 +5,12 @@ updateFilmstudioStorage();
 
 async function updateFilmstudioStorage() {
     
-    if (localStorage.getItem("filmstudio")) {
-        var filmstudio = JSON.parse(localStorage.getItem("filmstudio"));
+    if (getLoggedInUser()) {
+        var filmstudio = JSON.parse(getLoggedInUser());
 
-        var rentedMovies = await fetchDataAsync(apiURL + "/rentedFilm").then(r => r.filter(rent => rent.studioId == filmstudio.id));
+        var rentedMovies = await fetchActiveRentsForLoggedInUser(filmstudio.id);
         filmstudio["activeRents"] = rentedMovies;
-        localStorage.setItem("filmstudio", JSON.stringify(filmstudio));
+        updateLoggedInUser(filmstudio);
     }
 }
 
@@ -21,14 +21,30 @@ async function fetchDataAsync(url)
     return data;
 }
 
-if(localStorage.getItem("filmstudio")) {
+async function fetchActiveRentsForLoggedInUser(filmstudioId) {
+    return fetchDataAsync(apiURL + "/rentedFilm").then(r => r.filter(rent => rent.studioId == filmstudioId && rent.returned == false));
+}
+
+function getLoggedInUser() {
+    return localStorage.getItem("filmstudio");
+}
+
+function updateLoggedInUser(rawData) {
+    localStorage.setItem("filmstudio", JSON.stringify(rawData));
+}
+
+function removeLoggedInUser() {
+    localStorage.removeItem("filmstudio");
+}
+
+if(getLoggedInUser()) {
     showWelcome();
 } else {
     showLoginOptions();
 }
 
 function showWelcome() {
-    var filmstudio = JSON.parse(localStorage.getItem("filmstudio"));
+    var filmstudio = JSON.parse(getLoggedInUser());
     var loginDiv = document.getElementById("nav-item-login");
 
     loginDiv.innerHTML = "Inloggad som: " + filmstudio.name;
@@ -38,7 +54,7 @@ function showWelcome() {
 
     var logoutButton = document.getElementById("logout-button");
     logoutButton.addEventListener("click", function() {
-        localStorage.removeItem("filmstudio");
+        removeLoggedInUser();
         showLoginOptions();
     });
 }
@@ -72,9 +88,12 @@ function showLoginOptions() {
                 displayLoginErrorMsg();
 
             } else {
-                var rentedMovies = await fetchDataAsync(apiURL + "/rentedFilm").then(r => r.filter(rent => rent.studioId == result.id));
+                if(result.name == "admin") {
+                    console.log("admin hej");
+                }
+                var rentedMovies = await fetchActiveRentsForLoggedInUser(result.id);
                 var filmstudio = { id: result.id, name: result.name, activeRents: rentedMovies };
-                localStorage.setItem("filmstudio", JSON.stringify(filmstudio));
+                updateLoggedInUser(filmstudio);
                 showWelcome();
             }
         });
