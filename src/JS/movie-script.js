@@ -321,14 +321,14 @@ function displayAddMovieForm() {
                         <div>Filmen har lagts till!</div>
                         <button id="form-cancel-button">Tillbaka</button>
                     `);
-
+                    
+                    // Add click event for cancel button
                     var cancelButton = document.getElementById("form-cancel-button");
                     cancelButton.addEventListener("click", displayAdminWindow);
                 }
                 else {
                     errorMsgDiv.innerHTML = "Något oväntat gick fel..."
                 }
-                
             }
             else {
                 errorMsgDiv.innerHTML = "'Antal licenser' måste vara ett tal"
@@ -339,8 +339,8 @@ function displayAddMovieForm() {
         }
     });
 
+    // Add click event for cancel form button
     var cancelButton = document.getElementById("form-cancel-button");
     cancelButton.addEventListener("click", displayAdminWindow);
-    
     }
 }
