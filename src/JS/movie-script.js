@@ -320,8 +320,8 @@ async function displayFilmstudioPanel() {
         <div id="admin-studio-panel">
             <div id="admin-studios-inactive" class="admin-studio-container">Studios not verified</div>
             <div id="admin-studios-list" class="admin-studio-container">Studios</div>
-            <button id="panel-cancel-button">Tillbaka</button>
         </div>
+        <button id="panel-cancel-button">Tillbaka</button>
     `); 
 
     var inActiveStudioDiv = document.getElementById("admin-studios-inactive");
@@ -335,10 +335,9 @@ async function displayFilmstudioPanel() {
         if (!studio.verified) {
             inActiveStudioDiv.insertAdjacentHTML("beforeend", 
             `
-                <div class="admin-studio-item">
-                    <div class="studio-panel-name">${studio.name}
-                        <button onclick="verifyFilmstudio(${studio.id})">Verify</button>
-                    </div>
+                <div class="admin-studio-verify">
+                    <div class="admin-studio-name">${studio.name}</div>
+                    <button id="admin-verify-studio-button" onclick="verifyFilmstudio(${studio.id})">Verify</button>
                 </div>
             `);
         } 
@@ -349,13 +348,13 @@ async function displayFilmstudioPanel() {
             `
             <div class="admin-studio-item">
                 <div class="admin-studio-desc">
-                    <div class="studio-panel-id">${studio.id}</div>
-                    <div class="studio-panel-name">${studio.name}</div>
-                    <div class="studio-panel-email">${studio.email}</div>
+                    <div class="admin-studio-id">${studio.id}</div>
+                    <div class="admin-studio-name">${studio.name}</div>
+                    <div class="admin-studio-email">${studio.email}</div>
                 </div>
                 <div id="admin-studio${studio.id}-rents" class="admin-studio-rentals"></div>
             </div>
-            `);  
+            `); 
         }
     }   
 
@@ -373,13 +372,13 @@ async function addStudioRentalsToPanel(studio) {
     if(rentDiv) {
         for (i=0, j=studio.rentals.length; i < j; i++) {
             rental = studio.rentals[i];
-            var returnedClass = "studio-rental-returned" + ((rental.returned) ? "1" : "0")
+            var returnedClass = "rental-" + ((rental.returned) ? "inactive" : "active")
             
             rentDiv.insertAdjacentHTML("beforeend", 
             `
-            <div class="studio-rental-item">
+            <div class="studio-rental-item ${returnedClass}">
                 <div class="studio-rental-title">${rental.movie}</div>
-                <div class=${returnedClass}>${rental.returned}</div>
+                <div class="studio-rental-returned">${rental.returned}</div>
             </div>
             `); 
         }    
@@ -407,8 +406,10 @@ function displayAddMovieForm() {
 
         <div id="add-movie-errorMsg"></div>
         
-        <button id="form-submit-button">Lägg till</button>
-        <button id="form-cancel-button">Tillbaka</button>
+        <div id="add-movie-buttons">
+            <button id="form-submit-button">Lägg till</button>
+            <button id="form-cancel-button">Tillbaka</button>
+        </div>
     </div>
     `); 
 

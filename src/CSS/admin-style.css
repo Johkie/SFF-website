@@ -1,18 +1,19 @@
-
 /* Admin content holder */
 #admin-content {
     height: 100%;
     padding: 10px;    
-    background-color: thistle;
     
     display: flex;
     flex-flow: column wrap;
+
 }
 
 /* Main data holder */
 #admin-display {
-    height: 90%;
-    background-color: teal;
+    height: 100%;
+    background-color: #313438;
+
+    padding: 0px 10px;
 
     align-items: center;
     
@@ -21,17 +22,29 @@
 }
 
 #admin-display h3 {
-    margin: 0px; padding: 5px;
-    width: 100%;
+    margin: 8px; padding: 0px;
     text-align: center;
+    color: whitesmoke;
 }
 
 #admin-display button {
-    margin: 5px; 
+    background-color: rgb(223, 223, 223);
     width: 30%;
-    height: 50px;    
+    margin: 5px; 
+
+    text-transform: uppercase;
+    font-style: bold;
+    padding: 16px 20px;
     
     border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    opacity: .8;
+}
+
+#admin-display button:hover {
+    opacity: 1;
 }
 
 /* First admin window shown */ 
@@ -45,67 +58,144 @@
     align-content: center;
 }
 
-
-
 /* Main container for all studios */
 #admin-studio-panel {
-    background-color: tomato;
-    /* margin: 5px; */
-    padding: 5px;
-
+    background-color: brown;
     width: 100%;
 
     display:flex;
-    flex-flow: column wrap;
-
+    flex-flow: column;
 }
 
 /* Studio container */
 .admin-studio-container {
     margin: 5px;
-
-    min-height: 50px;
-    background-color: burlywood;
 }
 
 /* Studio object */ 
 .admin-studio-item {
-    background-color: darkgoldenrod;
-
+    background-color: #313438;
+    padding: 5px;
     display: flex;
     flex-flow: column wrap;
 }
 
-.admin-studio-item button {
-    background-color: darkmagenta;
-    max-width: 65px;
-    max-height: 40px;
+
+/* Verify button */ 
+#admin-verify-studio-button {
+    background-color: green;
+    width: 80px;
+    height: 40px;
 }
 
 /* Studio description container*/
 .admin-studio-desc {
-    background-color: darkgreen;
+    background-color: rgb(20, 20, 22);
+    color: whitesmoke;
     display: flex;
     flex-flow: row wrap;
 
-    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+
+    text-align: left;
+}
+
+/* Items in studio object */ 
+.admin-studio-id {
+    padding: 5px 10px;
+    flex-flow: 1;
+
+    width: 5%;
+    max-width: 40px;
+}
+.admin-studio-name {
+    padding: 5px 10px;
+    flex-flow: 2;
+    width: 30%;
+    max-width: 140px;
+}
+.admin-studio-email {
+    padding: 5px 10px;
+    flex-flow: 2;
+    width: 45%;
+    max-width: 250px;
 }
 
 /* Studio rental object holder */
 .admin-studio-rentals {
-    background-color: darkmagenta;
+    background-color: #53585e;
+
+    padding: 5px;
 
     display: flex;
     flex-flow: column wrap;
 
+    justify-content: space-evenly;
 }
 
 /* Rental object */
 .studio-rental-item {
     padding: 5px;
+    width: 99%;
+    display: flex;
+    flex-flow: row;
+    align-self: center;
+}
+
+.studio-rental-title {
+    padding: 2px 5px;
+    max-width: 250px;
+    width: 60%;
+}
+
+.studio-rental-rental-returned {
+    padding: 2px 5px;
+    max-width: 150px;
+    width: 40%;
+}
+
+.rental-active {
+    background-color: rgb(224, 87, 87);
+}
+
+.rental-inactive {
+    background-color: rgb(120, 167, 49);
+}
+
+.admin-studio-verify {
+    background-color: #313438;
+    color: rgb(199, 198, 198);
+
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+
+    margin: 4px;
+}
+
+/* Add movie form */
+#add-movie-form {
+    display: flex;
+    flex-flow: column;
+
+    width: 80%;
+
+    color: yellow
+}
+
+#add-movie-buttons {
     display: flex;
     flex-flow: row wrap;
 
-    justify-content: space-around;
+    justify-content: center;
 }
+
+/* Full-width input fields */
+#add-movie-form input[type=text] {
+    padding: 10px;
+    margin: 5px 0 10px 0;
+    border: none;
+    background: #f1f1f1;
+  }
 
